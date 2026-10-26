@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     // spinner.start(); 等价于executor.spin();
 
     // auto arm = moveit::planning_interface::MoveGroupInterface(nodemain, "arm");
-    moveit::planning_interface::MoveGroupInterface arm1(nodemain, "arm1");
+    moveit::planning_interface::MoveGroupInterface arm1(nodemain, "arm");
     //这样写的目的是要换arm只需该arm1，之后所有的都不用改。
     moveit::planning_interface::MoveGroupInterface& arm = arm1;
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     arm.setMaxAccelerationScalingFactor(1.0);
 
     // auto gripper = moveit::planning_interface::MoveGroupInterface(nodemain, "gripper");
-    moveit::planning_interface::MoveGroupInterface gripper1(nodemain, "grepper1");
+    moveit::planning_interface::MoveGroupInterface gripper1(nodemain, "grepper");
     moveit::planning_interface::MoveGroupInterface& gripper = gripper1;
 
 
@@ -130,10 +130,13 @@ int main(int argc, char **argv)
     target_pose.pose.orientation.z = q.getZ();
     target_pose.pose.orientation.w = q.getW();
 
+    //内部做了什么？？？
     arm.setStartStateToCurrentState();
     arm.setPoseTarget(target_pose);
 
+    //使用了什么规划方法？
     moveit::planning_interface::MoveGroupInterface::Plan plan1;
+
 
     bool success1 =
         (arm.plan(plan1) == moveit::core::MoveItErrorCode::SUCCESS);
