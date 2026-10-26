@@ -1,0 +1,29 @@
+# clangd configuration for the ROS2 Humble + MoveIt2 workspace.
+#
+# The compilation database (compile_commands.json) is the primary source of
+# include paths and defines. This file only supplies fallbacks for files that
+# are not part of the database yet, for example a freshly created source file
+# that has not been built.
+
+CompileFlags:
+  CompilationDatabase: .
+  Add:
+    - -std=gnu++17
+    - -Wall
+    - -Wextra
+    - -Wpedantic
+
+Diagnostics:
+  # Keep the editor responsive: report the usual warnings but do not run the
+  # full clang-tidy check set, which is very noisy on ROS2 headers.
+  Suppress:
+    - "*:unknown-warning-option"
+    - "ppcclint.c"
+  UnusedIncludes: None
+  #<!-- MissingIncludes: None -->
+
+Index:
+  Background: true
+
+InlayHints:
+  Enabled: true

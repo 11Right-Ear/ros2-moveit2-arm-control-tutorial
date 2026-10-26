@@ -28,6 +28,7 @@ __pycache__/
 *.swp
 *.swo
 *.user
+.cache/
 
 # OS files
 .DS_Store
@@ -36,3 +37,6 @@ Thumbs.db
 # Local environment files
 .env
 .env.*
+
+# Local MCP server config (machine-specific endpoints)
+.mcp.json
