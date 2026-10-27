@@ -1,12 +1,11 @@
 import os
+import subprocess
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterValue
-from launch.substitutions import Command
 
 
 def generate_launch_description():
@@ -32,11 +31,11 @@ def generate_launch_description():
     use_sim_time = True
 
     xacro_file = os.path.join(pkg_description, 'urdf', 'my_robot.gazebo.urdf.xacro')
-    robot_description = {
-        'robot_description': ParameterValue(
-            Command(['xacro ', xacro_file]), value_type=str
-        )
-    }
+    # 单行化：gazebo_ros2_control 会把 robot_description 塞进 --param，
+    # 多行 XML 会被 rcl 的 YAML 解析拒绝。去掉换行（保留属性内空格）即可。
+    urdf = subprocess.check_output(['xacro', xacro_file], text=True)
+    urdf = ' '.join(urdf.splitlines())
+    robot_description = {'robot_description': urdf}
 
     # 1) Gazebo（空世界 + GUI）
     gazebo = IncludeLaunchDescription(
