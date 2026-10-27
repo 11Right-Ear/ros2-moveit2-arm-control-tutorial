@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<robot name="demo1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="radius" value="0.37"/>
+    <xacro:property name="leg_length" value="4"/>
+    <xacro:property name="arm_length" value="2"/>
+
+    <!-- 人形主体躯干 -->
+    <link name="human_main">
+        <visual>
+        <origin xyz="0 0 5.5" rpy="0 0 0"/>     <!--离地高度4，因为减去了1.5,质心高度-->
+            <geometry>
+                <box size=" 2 1.5 3"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <box size=" 2 1.5 3"/>
+            </geometry>
+        </collision> 
+    </link>
+    <!-- 左臂 -->
+    <link name="left_arm">
+        <visual>
+        <origin xyz="-0.5 0.75 5.5" rpy="1.5708 0 0"/>
+            <geometry>
+                <cylinder length="${arm_length}" radius="${radius}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${arm_length}" radius="${radius}"/>
+            </geometry>
+        </collision> 
+    </link>
+    <!-- 右臂 -->
+    <link name="right_arm">
+        <visual>
+        <origin xyz="-0.5 -0.75 5.5" rpy="1.5708 0 0"/>
+            <geometry>
+                <cylinder length="${arm_length}" radius="${radius}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${arm_length}" radius="${radius}"/>
+            </geometry>
+        </collision> 
+    </link>
+    <!-- 左腿 -->
+    <link name="left_leg">
+        <visual>
+        <origin xyz="0 0 2" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="${leg_length}" radius="${radius}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${leg_length}" radius="${radius}"/>
+            </geometry>
+        </collision> 
+    </link>
+    <!-- 右腿 -->
+    <link name="right_leg">
+        <visual>
+        <origin xyz="0 0 2" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="${leg_length}" radius="${radius}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${leg_length}" radius="${radius}"/>
+            </geometry>
+        </collision> 
+    </link>
+    <!-- 头 -->
+    <link name="head">
+        <visual>
+        <origin xyz="0 0 4.5" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.8"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="1"/>
+            </geometry>
+        </collision> 
+    </link>
+    <!-- 机器人通过joint 连接到人体上 -->
+    <joint name="left_arm_joint" type="fixed">
+        <parent link="human_main"/>
+        <child link="left_arm"/>
+        <origin xyz="1 0.75 0" rpy="0 0 0"/>
+    </joint>
+    <joint name="right_arm_joint" type="fixed">
+        <parent link="human_main"/>
+        <child link="right_arm"/>
+        <origin xyz="1 -0.75 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+    <joint name="left_leg_joint" type="fixed">
+        <parent link="human_main"/>
+        <child link="left_leg"/>
+        <origin xyz="0 0.38 0" rpy="0 0 0"/>
+    </joint>
+    <joint name="right_leg_joint" type="fixed">
+        <parent link="human_main"/>
+        <child link="right_leg"/>
+        <origin xyz="0 -0.38 0" rpy="0 0 0"/>
+    </joint>
+    <joint name="head_joint" type="fixed">
+        <parent link="human_main"/>
+        <child link="head"/>
+        <origin xyz="0 0 3" rpy="0 0 0"/>
+    </joint>
+</robot>
