@@ -29,7 +29,7 @@ def generate_launch_description():
     pkg_description = get_package_share_directory('my_robot_description')
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
-    use_sim_time = 'true'
+    use_sim_time = True
 
     xacro_file = os.path.join(pkg_description, 'urdf', 'my_robot.gazebo.urdf.xacro')
     robot_description = {
