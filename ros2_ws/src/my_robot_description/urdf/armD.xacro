@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot name="demo1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 你也可以直接不使用变量代替重复 -->
+    <!-- <link name="dyh_1">
+        <visual>
+            <geometry>
+                <cylinder length="1" radius="0.5"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="1" radius="0.5"/>
+            </geometry>
+        </collision>
+    </link> -->
+    <!-- 使用变量方便重复 -->
+    <xacro:property name="radius" value="0.5"/>
+    <xacro:property name="length" value="1"/>
+
+    <link name="dyh">
+        <visual>
+        <origin xyz="0 0 0.5" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="${length}" radius="${radius}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length}" radius="${radius}"/>
+            </geometry>
+        </collision> 
+    </link>
+
+    <link name="dyh1">
+        <visual>
+        <origin xyz="0 0 0.5" rpy="0 0 0"/>
+            <geometry>
+                <box size=" 1 1 1"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+    
+    <joint name="combine" type="fixed">
+        <parent link="dyh"/>
+        <child link="dyh1"/>
+        <origin xyz="0 0 1.0" rpy="0 0 0"/>
+    </joint>
+</robot>
