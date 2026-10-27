@@ -50,6 +50,7 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[robot_description, {'use_sim_time': use_sim_time}],
+        remappings=[('/joint_states', '/my_robot/joint_states')],
         output='screen',
     )
 
@@ -66,7 +67,7 @@ def generate_launch_description():
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_state_broadcaster'],
+        arguments=['-c', '/my_robot/controller_manager', 'joint_state_broadcaster'],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen',
     )
@@ -74,7 +75,7 @@ def generate_launch_description():
     arm_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['arm_controller'],
+        arguments=['-c', '/my_robot/controller_manager', 'arm_controller'],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen',
     )
@@ -82,7 +83,7 @@ def generate_launch_description():
     gripper_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['gripper_controller'],
+        arguments=['-c', '/my_robot/controller_manager', 'gripper_controller'],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen',
     )
