@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+    Gazebo 物理仿真专用 ros2_control 硬件接口（区别于 mock 版
+    my_robot.ros2_control.xacro）：
+    1) 硬件插件换成 gazebo_ros2_control/GazeboSystem，由 Gazebo 物理引擎驱动；
+    2) 每个关节的 position 命令接口通过 pos_kp/pos_ki/pos_kd 声明 PID 增益，
+       gazebo_ros2_control 会据此把位置误差换算成力矩作用到关节上（真实物理）；
+    3) 额外暴露 velocity 状态接口；
+    4) <gazebo> 插件块 libgazebo_ros2_control.so 在模型加载时创建
+       controller_manager 并加载控制器参数 yaml。
+  -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <joint name="joint1">
+      <param name="pos_kp">100.0</param>
+      <param name="pos_ki">5.0</param>
+      <param name="pos_kd">1.0</param>
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint2">
+      <param name="pos_kp">100.0</param>
+      <param name="pos_ki">5.0</param>
+      <param name="pos_kd">1.0</param>
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint3">
+      <param name="pos_kp">100.0</param>
+      <param name="pos_ki">5.0</param>
+      <param name="pos_kd">1.0</param>
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint4">
+      <param name="pos_kp">100.0</param>
+      <param name="pos_ki">5.0</param>
+      <param name="pos_kd">1.0</param>
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint5">
+      <param name="pos_kp">100.0</param>
+      <param name="pos_ki">5.0</param>
+      <param name="pos_kd">1.0</param>
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint6">
+      <param name="pos_kp">100.0</param>
+      <param name="pos_ki">5.0</param>
+      <param name="pos_kd">1.0</param>
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="gripper_left_finger_joint">
+      <param name="pos_kp">50.0</param>
+      <param name="pos_ki">1.0</param>
+      <param name="pos_kd">0.5</param>
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+  </ros2_control>
+
+  <!-- Gazebo 加载该插件，创建 controller_manager 并读取控制器参数 -->
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find my_robot_bringup)/config/ros2_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
