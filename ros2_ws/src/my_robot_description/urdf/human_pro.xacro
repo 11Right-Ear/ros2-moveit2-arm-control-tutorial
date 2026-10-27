@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<robot name="demo1" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- ================= 尺寸参数 ================= -->
+    <xacro:property name="radius" value="0.37"/>
+    <xacro:property name="leg_length" value="4"/>
+    <xacro:property name="arm_length" value="2"/>
+
+    <xacro:property name="torso_size_x" value="2"/>
+    <xacro:property name="torso_size_y" value="1.5"/>
+    <xacro:property name="torso_size_z" value="3"/>
+    <xacro:property name="torso_center_z" value="5.5"/>
+
+    <!-- 腿：中心高度 = 腿长/2；相对躯干中心的 z 偏移 -->
+    <xacro:property name="leg_y" value="0.38"/>
+    <xacro:property name="leg_center_z" value="${leg_length/2}"/>
+    <xacro:property name="leg_joint_z" value="${leg_center_z - torso_center_z}"/>
+
+    <!-- 手臂：贴着躯干侧面，y = 躯干半宽 + 手臂半径 -->
+    <xacro:property name="arm_y" value="${torso_size_y/2 + radius}"/>
+
+    <!-- 头：球底正好接躯干顶部 -->
+    <xacro:property name="head_radius" value="0.8"/>
+    <xacro:property name="head_center_z"
+                    value="${torso_center_z + torso_size_z/2 + head_radius}"/>
+    <xacro:property name="head_joint_z"
+                    value="${head_center_z - torso_center_z}"/>
+
+    <!-- ================= 根 link：脚底 ================= -->
+    <link name="base_footprint"/>
+
+    <joint name="base_to_human" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="human_main"/>
+        <origin xyz="0 0 ${torso_center_z}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- ================= 躯干 ================= -->
+    <link name="human_main">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${torso_size_x} ${torso_size_y} ${torso_size_z}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${torso_size_x} ${torso_size_y} ${torso_size_z}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- ================= 手臂宏 ================= -->
+    <xacro:macro name="arm" params="name y">
+        <link name="${name}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${arm_length}" radius="${radius}"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${arm_length}" radius="${radius}"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${name}_joint" type="fixed">
+            <parent link="human_main"/>
+            <child link="${name}"/>
+            <origin xyz="0 ${y} 0" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- ================= 腿宏 ================= -->
+    <xacro:macro name="leg" params="name y">
+        <link name="${name}">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${leg_length}" radius="${radius}"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="${leg_length}" radius="${radius}"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${name}_joint" type="fixed">
+            <parent link="human_main"/>
+            <child link="${name}"/>
+            <origin xyz="0 ${y} ${leg_joint_z}" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- ================= 生成左右手臂和腿 ================= -->
+    <xacro:arm name="left_arm"  y="${arm_y}"/>
+    <xacro:arm name="right_arm" y="${-arm_y}"/>
+
+    <xacro:leg name="left_leg"  y="${leg_y}"/>
+    <xacro:leg name="right_leg" y="${-leg_y}"/>
+
+    <!-- ================= 头 ================= -->
+    <link name="head">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="${head_radius}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="${head_radius}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="head_joint" type="fixed">
+        <parent link="human_main"/>
+        <child link="head"/>
+        <origin xyz="0 0 ${head_joint_z}" rpy="0 0 0"/>
+    </joint>
+
+</robot>
