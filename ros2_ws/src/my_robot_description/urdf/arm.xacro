@@ -14,8 +14,13 @@
             <geometry>
                 <box size="0.4 0.4 0.1"/>
             </geometry>
-            <origin xyz="0 0 0.05" rpy="0 0 0"/>        
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
         </collision>
+        <inertial>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+            <mass value="5.0"/>
+            <inertia ixx="0.070833" ixy="0" ixz="0" iyy="0.070833" iyz="0" izz="0.133333"/>
+        </inertial>
     </link>
 
     <!-- shoulder_link: cylinder length 0.5 radius 0.1 -->
@@ -31,8 +36,13 @@
             <geometry>
                 <box size="0.2 0.2 0.5"/>
             </geometry>
-            <origin xyz="0 0 0.25" rpy="0 0 0"/>     
+            <origin xyz="0 0 0.25" rpy="0 0 0"/>
         </collision>
+        <inertial>
+            <origin xyz="0 0 0.25" rpy="0 0 0"/>
+            <mass value="0.5"/>
+            <inertia ixx="0.011667" ixy="0" ixz="0" iyy="0.011667" iyz="0" izz="0.0025"/>
+        </inertial>
     </link>
 
     <!-- arm_link: cylinder length 0.6 radius 0.05 -->
@@ -51,6 +61,11 @@
             </geometry>
             <origin xyz="0 0 0.3" rpy="0 0 0"/>
         </collision>
+        <inertial>
+            <origin xyz="0 0 0.3" rpy="0 0 0"/>
+            <mass value="0.3"/>
+            <inertia ixx="0.009188" ixy="0" ixz="0" iyy="0.009188" iyz="0" izz="0.000375"/>
+        </inertial>
     </link>
 
     <!-- elbow_link: cylinder length 0.1 radius 0.05 -->
@@ -68,6 +83,11 @@
             </geometry>
             <origin xyz="0 0 0.05" rpy="0 0 0"/>
         </collision>
+        <inertial>
+            <origin xyz="0 0 0.05" rpy="0 0 0"/>
+            <mass value="0.1"/>
+            <inertia ixx="0.000146" ixy="0" ixz="0" iyy="0.000146" iyz="0" izz="0.000125"/>
+        </inertial>
     </link>
 
     <!-- forearm_link: cylinder length 0.5 radius 0.05 -->
@@ -84,8 +104,13 @@
             <geometry>
                 <box size="0.1 0.1 0.5"/>
             </geometry>
-            <origin xyz="0 0 0.25" rpy="0 0 0"/> 
+            <origin xyz="0 0 0.25" rpy="0 0 0"/>
         </collision>
+        <inertial>
+            <origin xyz="0 0 0.25" rpy="0 0 0"/>
+            <mass value="0.25"/>
+            <inertia ixx="0.005365" ixy="0" ixz="0" iyy="0.005365" iyz="0" izz="0.000313"/>
+        </inertial>
     </link>
 
     <!-- wrist_link: box size 0.1 0.1 0.05 -->
@@ -103,6 +128,11 @@
             </geometry>
             <origin xyz="0 0 0.025" rpy="0 0 0"/>
         </collision>
+        <inertial>
+            <origin xyz="0 0 0.025" rpy="0 0 0"/>
+            <mass value="0.1"/>
+            <inertia ixx="0.000104" ixy="0" ixz="0" iyy="0.000104" iyz="0" izz="0.000167"/>
+        </inertial>
     </link>
 
     <!-- hand_link: box size 0.1 0.1 0.02 -->
@@ -120,10 +150,21 @@
             </geometry>
             <origin xyz="0 0 0.01" rpy="0 0 0"/>
         </collision>
+        <inertial>
+            <origin xyz="0 0 0.01" rpy="0 0 0"/>
+            <mass value="0.05"/>
+            <inertia ixx="0.000043" ixy="0" ixz="0" iyy="0.000043" iyz="0" izz="0.000083"/>
+        </inertial>
     </link>
 
     <!-- tool_link: no visual -->
-    <link name="tool_link"/>
+    <link name="tool_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.01"/>
+            <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+        </inertial>
+    </link>
 
     <!-- joint1: revolute, axis z, min -3.14, max 3.14 -->
     <joint name="joint1" type="revolute">

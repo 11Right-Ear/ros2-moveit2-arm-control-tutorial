@@ -17,6 +17,12 @@
       </geometry>
       <origin xyz="0 0 0.01" rpy="0 0 0"/>
     </collision>
+
+    <inertial>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <mass value="0.05"/>
+      <inertia ixx="0.000017" ixy="0" ixz="0" iyy="0.000168" iyz="0" izz="0.000182"/>
+    </inertial>
   </link>
 
   <!-- 左夹爪手指 -->
@@ -35,6 +41,12 @@
       </geometry>
       <origin xyz="0 0 0.04" rpy="0 0 0"/>
     </collision>
+
+    <inertial>
+      <origin xyz="0 0 0.04" rpy="0 0 0"/>
+      <mass value="0.02"/>
+      <inertia ixx="0.000017" ixy="0" ixz="0" iyy="0.000011" iyz="0" izz="0.000007"/>
+    </inertial>
   </link>
 
   <!-- 右夹爪手指 -->
@@ -53,6 +65,12 @@
       </geometry>
       <origin xyz="0 0 0.04" rpy="0 0 0"/>
     </collision>
+
+    <inertial>
+      <origin xyz="0 0 0.04" rpy="0 0 0"/>
+      <mass value="0.02"/>
+      <inertia ixx="0.000017" ixy="0" ixz="0" iyy="0.000011" iyz="0" izz="0.000007"/>
+    </inertial>
   </link>
 
   <!-- 左手指连接到底座 -->
