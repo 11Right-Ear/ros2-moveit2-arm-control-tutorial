@@ -5,6 +5,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import Command
 
 
@@ -31,7 +32,11 @@ def generate_launch_description():
     use_sim_time = 'true'
 
     xacro_file = os.path.join(pkg_description, 'urdf', 'my_robot.gazebo.urdf.xacro')
-    robot_description = {'robot_description': Command(['xacro ', xacro_file])}
+    robot_description = {
+        'robot_description': ParameterValue(
+            Command(['xacro ', xacro_file]), value_type=str
+        )
+    }
 
     # 1) Gazebo（空世界 + GUI）
     gazebo = IncludeLaunchDescription(
