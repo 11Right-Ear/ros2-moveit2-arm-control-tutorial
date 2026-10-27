@@ -47,22 +47,22 @@
     <xacro:wheel name="rear_left"   x="-0.8" y="0.6"/>
     <xacro:wheel name="rear_right"  x="-0.8" y="-0.6"/>
 
+    <gazebo>
+        <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+            <update_rate>50</update_rate>
+
+            <left_joint>base_to_front_left</left_joint>
+            <left_joint>base_to_rear_left</left_joint>
+            <right_joint>base_to_front_right</right_joint>
+            <right_joint>base_to_rear_right</right_joint>
+
+            <wheel_separation>1.2</wheel_separation>
+            <wheel_radius>0.3</wheel_radius>
+
+            <command_topic>cmd_vel</command_topic>
+            <odometry_topic>odom</odometry_topic>
+            <odometry_frame>odom</odometry_frame>
+            <robot_base_frame>base_footprint</robot_base_frame>
+        </plugin>
+    </gazebo>
 </robot>
-<gazebo>
-    <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
-        <update_rate>50</update_rate>
-
-        <left_joint>base_to_front_left</left_joint>
-        <left_joint>base_to_rear_left</left_joint>
-        <right_joint>base_to_front_right</right_joint>
-        <right_joint>base_to_rear_right</right_joint>
-
-        <wheel_separation>1.2</wheel_separation>
-        <wheel_radius>0.3</wheel_radius>
-
-        <command_topic>cmd_vel</command_topic>
-        <odometry_topic>odom</odometry_topic>
-        <odometry_frame>odom</odometry_frame>
-        <robot_base_frame>base_footprint</robot_base_frame>
-    </plugin>
-</gazebo>
