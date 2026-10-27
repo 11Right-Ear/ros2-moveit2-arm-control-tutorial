@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     arm.setMaxAccelerationScalingFactor(1.0);
 
     // auto gripper = moveit::planning_interface::MoveGroupInterface(nodemain, "gripper");
-    moveit::planning_interface::MoveGroupInterface gripper1(nodemain, "grepper");
+    moveit::planning_interface::MoveGroupInterface gripper1(nodemain, "gripper");
     moveit::planning_interface::MoveGroupInterface& gripper = gripper1;
 
 
@@ -143,6 +143,7 @@ int main(int argc, char **argv)
 
     if (success1)
     {
+        //执行器用的是什么跟踪算法去跟踪的？
         arm.execute(plan1);
     }
 
@@ -150,6 +151,7 @@ int main(int argc, char **argv)
 
     std::vector<geometry_msgs::msg::Pose> waypoints;
 
+    //这个数据结构放在这里是为了起什么作用？？
     geometry_msgs::msg::Pose pose1 = arm.getCurrentPose().pose;
     pose1.position.z += 0.2;
     waypoints.push_back(pose1);

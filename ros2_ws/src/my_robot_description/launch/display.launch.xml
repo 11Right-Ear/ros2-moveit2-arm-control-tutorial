@@ -1,6 +1,10 @@
 <launch>
+    <!-- 默认使用完整机器人描述 -->
+    <!-- <let name="urdf_path"
+         value="$(find-pkg-share my_robot_description)/urdf/my_robot.urdf.xacro"/> -->
+    <!-- 测试单个 urdf 文件时启用下面这行（注释掉上面两行） -->
     <let name="urdf_path"
-         value="$(find-pkg-share my_robot_description)/urdf/my_robot.urdf.xacro"/>
+         value="$(find-pkg-share my_robot_description)/urdf/armD.xacro"/>
 
     <let name="rviz_config_path"
          value="$(find-pkg-share my_robot_description)/rviz/urdf_config.rviz"/>
