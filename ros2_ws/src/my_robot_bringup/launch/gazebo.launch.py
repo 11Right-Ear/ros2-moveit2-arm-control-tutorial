@@ -75,10 +75,12 @@ def generate_launch_description():
     )
 
     # 3) spawn_entity：从 /robot_description 话题读取并 spawn 模型
+    #    -z 0.01：底座碰撞盒底面原本正好落在 z=0 的地面上（零穿透、面面共面），
+    #    这种退化接触会让 ODE 求解器解出 NaN。抬高 1cm 让它"落"下来而不是"贴"上去。
     spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-topic', 'robot_description', '-entity', 'my_robot'],
+        arguments=['-topic', 'robot_description', '-entity', 'my_robot', '-z', '0.01'],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen',
     )
@@ -100,6 +102,17 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 诊断：spawn 之后直接把 Gazebo 里每个 link 的真实位姿打到控制台。
+    # （joint_states 里的 position 来自 ros2_control 的状态接口，
+    #   link 塌掉/NaN 时它未必能反映 Gazebo 里的真实情况，这个才是。）
+    diagnose = ExecuteProcess(
+        cmd=['bash', '-c',
+             'sleep 10; echo "=== [gazebo] my_robot 各 link 位姿 ==="; '
+             'gz model --model-name my_robot --info 2>&1 || '
+             'gz model -m my_robot -i 2>&1 || true; exit 0'],
+        output='screen',
+    )
+
     # 延迟 3 秒再启动 Gazebo：确保上面的清理动作确实跑完，
     # 即使 pkill 的匹配逻辑再出问题，也碰不到这一次的 gzserver。
     start = TimerAction(
@@ -117,4 +130,5 @@ def generate_launch_description():
         clean_gazebo_arg,
         clean_gazebo,
         start,
+        diagnose,
     ])
