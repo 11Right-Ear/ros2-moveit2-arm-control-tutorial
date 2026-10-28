@@ -9,7 +9,7 @@
        gazebo_ros2_control 会据此把位置误差换算成力矩作用到关节上（真实物理）。
        这里刻意去掉 pos_ki（积分项），避免 windup 导致臂发散；kd 加大 + URDF 里
        的关节 dynamics damping 一起提供阻尼，防止振荡。
-    3) 额外暴露 velocity 状态接口；
+    3) 显式给出 initial_value，避免状态初值为 NaN 导致仿真发散；
     4) <gazebo> 插件块 libgazebo_ros2_control.so 在模型加载时创建
        controller_manager 并加载控制器参数 yaml。
   -->
@@ -22,45 +22,60 @@
       <param name="pos_kp">80.0</param>
       <param name="pos_kd">15.0</param>
       <command_interface name="position"/>
-      <state_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
     </joint>
     <joint name="joint2">
       <param name="pos_kp">80.0</param>
       <param name="pos_kd">15.0</param>
       <command_interface name="position"/>
-      <state_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
     </joint>
     <joint name="joint3">
       <param name="pos_kp">80.0</param>
       <param name="pos_kd">15.0</param>
       <command_interface name="position"/>
-      <state_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
     </joint>
     <joint name="joint4">
       <param name="pos_kp">80.0</param>
       <param name="pos_kd">15.0</param>
       <command_interface name="position"/>
-      <state_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
     </joint>
     <joint name="joint5">
       <param name="pos_kp">80.0</param>
       <param name="pos_kd">15.0</param>
       <command_interface name="position"/>
-      <state_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
     </joint>
     <joint name="joint6">
       <param name="pos_kp">80.0</param>
       <param name="pos_kd">15.0</param>
       <command_interface name="position"/>
-      <state_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
     </joint>
 
   </ros2_control>
 
-  <!-- Gazebo 加载该插件，创建 controller_manager 并读取控制器参数 -->
+  <!-- Gazebo 加载该插件，创建 controller_manager 并读取控制器参数。
+       hold_joints=true：控制器尚未激活时把关节速度锁为 0，
+       避免机械臂在启动最初几秒因重力自由下落而折断塌陷。 -->
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-      <parameters>$(find my_robot_bringup)/config/ros2_controllers.yaml</parameters>
+      <parameters>$(find my_robot_bringup)/config/ros2_controllers_gazebo.yaml</parameters>
+      <hold_joints>true</hold_joints>
     </plugin>
   </gazebo>
 
