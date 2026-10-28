@@ -1,5 +1,6 @@
 import os
 import subprocess
+import tempfile
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -55,9 +56,15 @@ def generate_launch_description():
     xacro_file = os.path.join(pkg_description, 'urdf', 'my_robot.gazebo.urdf.xacro')
     # 单行化：gazebo_ros2_control 会把 robot_description 塞进 --param，
     # 多行 XML 会被 rcl 的 YAML 解析拒绝。去掉换行（保留属性内空格）即可。
-    urdf = subprocess.check_output(['xacro', xacro_file], text=True)
-    urdf = ' '.join(urdf.splitlines())
+    urdf_raw = subprocess.check_output(['xacro', xacro_file], text=True)
+    urdf = ' '.join(urdf_raw.splitlines())
     robot_description = {'robot_description': urdf}
+
+    # 把展开后的 URDF 落盘，方便离线用 `gz sdf -p` 看 Gazebo 实际转换出来的
+    # SDF 到底长什么样（诊断用，不影响仿真）。
+    urdf_dump = os.path.join(tempfile.gettempdir(), 'my_robot_gazebo.urdf')
+    with open(urdf_dump, 'w') as f:
+        f.write(urdf_raw)
 
     # 1) Gazebo（空世界 + GUI）
     gazebo = IncludeLaunchDescription(
@@ -102,14 +109,22 @@ def generate_launch_description():
         output='screen',
     )
 
-    # 诊断：spawn 之后直接把 Gazebo 里每个 link 的真实位姿打到控制台。
+    # 诊断：spawn 之后把 Gazebo 里真实存在的 link 及其位姿打到控制台。
     # （joint_states 里的 position 来自 ros2_control 的状态接口，
     #   link 塌掉/NaN 时它未必能反映 Gazebo 里的真实情况，这个才是。）
     diagnose = ExecuteProcess(
         cmd=['bash', '-c',
-             'sleep 10; echo "=== [gazebo] my_robot 各 link 位姿 ==="; '
+             'sleep 10; '
+             'echo "=== [gazebo] URDF 概要 ==="; '
+             'grep -c "<link " ' + urdf_dump + '; '
+             'grep -c "<joint " ' + urdf_dump + '; '
+             'echo "=== [gazebo] my_robot 各 link 位姿 ==="; '
              'gz model --model-name my_robot --info 2>&1 || '
-             'gz model -m my_robot -i 2>&1 || true; exit 0'],
+             'gz model -m my_robot -i 2>&1 || true; '
+             'echo "=== [gazebo] URDF 转 SDF 结果里的 link/joint 数 ==="; '
+             '(gz sdf -p ' + urdf_dump + ' 2>/dev/null || ign sdf -p ' + urdf_dump + ' 2>/dev/null) '
+             '| grep -c "<link\\|<joint\\|name=" || true; '
+             'exit 0'],
         output='screen',
     )
 

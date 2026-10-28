@@ -79,44 +79,12 @@
     </plugin>
   </gazebo>
 
-  <!-- 关闭相邻连杆之间的碰撞。
-       本 URDF 里每一段的碰撞盒都"正好贴着"下一段（面面共面，X/Y 完全重叠），
-       这种零穿透的退化接触会让 ODE 的约束求解器解出 NaN：
-       关节 velocity/effort 变成 NaN，连杆位姿变成 NaN，
-       Gazebo 渲染时 NaN 位姿的连杆直接不显示 —— 表现就是"只剩底座，机械臂不见了"。
-       机器人自身的相邻连杆本来就不该互相碰撞，关掉同时也避免
-       碰撞求解器跟关节 PID 抢力矩（机械臂会抖、会飞）。 -->
-  <gazebo>
-    <joint name="joint1">
-      <parent>base_link</parent>
-      <child>shoulder_link</child>
-      <disable_collide>true</disable_collide>
-    </joint>
-    <joint name="joint2">
-      <parent>shoulder_link</parent>
-      <child>arm_link</child>
-      <disable_collide>true</disable_collide>
-    </joint>
-    <joint name="joint3">
-      <parent>arm_link</parent>
-      <child>elbow_link</child>
-      <disable_collide>true</disable_collide>
-    </joint>
-    <joint name="joint4">
-      <parent>elbow_link</parent>
-      <child>forearm_link</child>
-      <disable_collide>true</disable_collide>
-    </joint>
-    <joint name="joint5">
-      <parent>forearm_link</parent>
-      <child>wrist_link</child>
-      <disable_collide>true</disable_collide>
-    </joint>
-    <joint name="joint6">
-      <parent>wrist_link</parent>
-      <child>hand_link</child>
-      <disable_collide>true</disable_collide>
-    </joint>
-  </gazebo>
+  <!--
+    注意：不要在这里加 <gazebo><joint>...<disable_collide> 的写法。
+    Gazebo 把 URDF 读进来时会把它当成真正的 SDF <joint> 处理，而
+    disable_collide 那种写法没有 type 属性，结果是整个模型解析失败：
+      Error Code 4 Msg: Required attribute[type] in element[joint] is not specified in SDF.
+    相邻连杆的碰撞改用 arm.xacro 里的碰撞盒留缝（每段比原来短 1cm）来避免。
+  -->
 
 </robot>
