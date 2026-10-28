@@ -54,12 +54,6 @@
       <command_interface name="position"/>
       <state_interface name="position"/>
     </joint>
-    <joint name="gripper_left_finger_joint">
-      <param name="pos_kp">30.0</param>
-      <param name="pos_kd">3.0</param>
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-    </joint>
 
   </ros2_control>
 

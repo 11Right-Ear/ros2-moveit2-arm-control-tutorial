@@ -73,14 +73,11 @@
     </inertial>
   </link>
 
-  <!-- 左手指连接到底座 -->
-  <joint name="gripper_left_finger_joint" type="prismatic">
+  <!-- 左手指固定连接到底座（Gazebo 下 prismatic 关节有 NaN 问题，先改为固定） -->
+  <joint name="gripper_left_finger_joint" type="fixed">
     <parent link="gripper_base_link"/>
     <child link="gripper_left_finger_link"/>
     <origin xyz="-0.07 0 0.02" rpy="0 0 0"/>
-    <axis xyz="1 0 0"/>
-    <dynamics damping="1.0"/>
-    <limit effort="1000.0" velocity="1.0" lower="0.0" upper="0.06"/>
   </joint>
 
   <!-- 右手指固定连接到底座（Gazebo 对 mimic 联动不稳定，改为固定） -->

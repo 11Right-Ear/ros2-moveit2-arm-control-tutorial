@@ -78,19 +78,10 @@ def generate_launch_description():
         output='screen',
     )
 
-    gripper_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['gripper_controller'],
-        parameters=[{'use_sim_time': use_sim_time}],
-        output='screen',
-    )
-
     return LaunchDescription([
         gazebo,
         robot_state_publisher,
         spawn_entity,
         joint_state_broadcaster_spawner,
         arm_controller_spawner,
-        gripper_controller_spawner,
     ])
