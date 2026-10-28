@@ -18,8 +18,8 @@
         </collision>
         <inertial>
             <origin xyz="0 0 0.05" rpy="0 0 0"/>
-            <mass value="5.0"/>
-            <inertia ixx="0.070833" ixy="0" ixz="0" iyy="0.070833" iyz="0" izz="0.133333"/>
+            <mass value="10.0"/>
+            <inertia ixx="0.141667" ixy="0" ixz="0" iyy="0.141667" iyz="0" izz="0.266667"/>
         </inertial>
     </link>
 
@@ -172,6 +172,7 @@
         <child link="shoulder_link"/>
         <origin xyz="0 0 0.1" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
+        <dynamics damping="2.0"/>
         <limit lower="-3.14" upper="3.14" effort="1000.0" velocity="1.0"/>
     </joint>
 
@@ -181,6 +182,7 @@
         <child link="arm_link"/>
         <origin xyz="0 0 0.5" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
+        <dynamics damping="2.0"/>
         <limit lower="0" upper="2.5" effort="1000.0" velocity="1.0"/>
     </joint>
 
@@ -190,6 +192,7 @@
         <child link="elbow_link"/>
         <origin xyz="0 0 0.6" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
+        <dynamics damping="2.0"/>
         <limit lower="0" upper="2.5" effort="1000.0" velocity="1.0"/>
     </joint>
 
@@ -199,6 +202,7 @@
         <child link="forearm_link"/>
         <origin xyz="0 0 0.1" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
+        <dynamics damping="2.0"/>
         <limit lower="-3.14" upper="3.14" effort="1000.0" velocity="1.0"/>
     </joint>
 
@@ -208,6 +212,7 @@
         <child link="wrist_link"/>
         <origin xyz="0 0 0.5" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
+        <dynamics damping="2.0"/>
         <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="1.0"/>
     </joint>
 
@@ -217,6 +222,7 @@
         <child link="hand_link"/>
         <origin xyz="0 0 0.05" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
+        <dynamics damping="2.0"/>
     </joint>
 
     <!-- hand_tool_joint: fixed -->
