@@ -3,7 +3,8 @@ import subprocess
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import (DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription,
+                            TimerAction)
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -36,9 +37,17 @@ def generate_launch_description():
         default_value='true',
         description='Kill leftover gzserver/gzclient processes before starting.'
     )
+    # 必须用 `pkill -x`（精确匹配进程名），不能用 `-f`（匹配整条命令行）。
+    # `-f` 会同时匹配到两样东西：
+    #   1) 本进程自己的命令行（"bash -c pkill -9 -f gzserver ..." 里就含 gzserver）
+    #      -> bash 自杀，日志里 exit code -9；
+    #   2) 刚启动的那个 gzserver（cmdline 是 "gzserver /opt/ros/humble/..."）
+    #      -> 被误杀 -> /spawn_entity 服务不存在 -> 模型 spawn 失败
+    #      -> controller_manager 联系不上 -> 控制器永远起不来。
+    # `-x` 只比对进程名（comm），匹配不到上面这两种情况。
     clean_gazebo = ExecuteProcess(
         cmd=['bash', '-c',
-             'pkill -9 -f gzserver 2>/dev/null; pkill -9 -f gzclient 2>/dev/null; '
+             'pkill -9 -x gzserver 2>/dev/null; pkill -9 -x gzclient 2>/dev/null; '
              'sleep 1; exit 0'],
         output='screen',
     )
@@ -91,12 +100,21 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 延迟 3 秒再启动 Gazebo：确保上面的清理动作确实跑完，
+    # 即使 pkill 的匹配逻辑再出问题，也碰不到这一次的 gzserver。
+    start = TimerAction(
+        period=3.0,
+        actions=[
+            gazebo,
+            robot_state_publisher,
+            spawn_entity,
+            joint_state_broadcaster_spawner,
+            arm_controller_spawner,
+        ],
+    )
+
     return LaunchDescription([
         clean_gazebo_arg,
         clean_gazebo,
-        gazebo,
-        robot_state_publisher,
-        spawn_entity,
-        joint_state_broadcaster_spawner,
-        arm_controller_spawner,
+        start,
     ])
