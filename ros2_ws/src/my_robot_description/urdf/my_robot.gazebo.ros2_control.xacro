@@ -101,6 +101,15 @@
            /joint_states 里发 NaN 速度（没有可用的状态接口） -->
       <state_interface name="velocity"/>
     </joint>
+    <joint name="gripper_left_finger_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- 速度状态接口：不声明的话 joint_state_broadcaster 会往
+           /joint_states 里发 NaN 速度（没有可用的状态接口） -->
+      <state_interface name="velocity"/>
+    </joint>
 
   </ros2_control>
 

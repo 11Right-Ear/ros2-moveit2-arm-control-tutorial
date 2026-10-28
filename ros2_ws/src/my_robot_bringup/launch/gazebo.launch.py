@@ -162,6 +162,14 @@ def generate_launch_description():
         output='screen',
     )
 
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper_controller'],
+        parameters=[{'use_sim_time': use_sim_time}],
+        output='screen',
+    )
+
     # 诊断：spawn 之后把 Gazebo 里真实存在的 link 及其位姿打到控制台。
     # （joint_states 里的 position 来自 ros2_control 的状态接口，
     #   link 塌掉/NaN 时它未必能反映 Gazebo 里的真实情况，这个才是。）
@@ -189,6 +197,7 @@ def generate_launch_description():
             spawn_entity,
             joint_state_broadcaster_spawner,
             arm_controller_spawner,
+            gripper_controller_spawner,
         ],
     )
 
