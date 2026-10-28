@@ -6,6 +6,13 @@ ros2_ws/log/
 **/install/
 **/log/
 
+# 本地 clone 的第三方包（gazebo_ros2_control 需自行 clone 并打补丁，
+# 见 ros2_ws/scripts/patch_gazebo_ros2_control.sh）
+ros2_ws/src/gazebo_ros2_control/
+
+# 运行时日志
+ros2_ws/error.log
+
 # CMake
 CMakeCache.txt
 CMakeFiles/
