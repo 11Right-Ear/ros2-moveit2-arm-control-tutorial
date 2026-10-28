@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<!--
+  Gazebo 世界文件：在 gazebo_ros 默认空世界的基础上做了两处改动。
+
+  1) 加上 gazebo_ros_state 插件
+     没有这个插件时 Gazebo 只提供 /clock，
+     /gazebo/model_states、/gazebo/link_states、/gazebo/joint_states、
+     /gazebo/contacts 这些话题都没有，RViz / MoveIt 也就接不上 Gazebo 的实时状态。
+     插件会在 /gazebo 命名空间下把这些状态发布出来。
+
+  2) 物理参数：把积分步长从默认的 0.001 s 降到 0.0005 s
+     （real_time_update_rate 相应改成 2000，保持 1 倍实时速度）。
+     默认步长下这条机械臂的接触约束会让 ODE 求解器发散：
+     底座落到地面后不到 0.1 s 整个模型就会炸开（各连杆位置变成几百米），
+     关节速度也全是 NaN。步长减半之后求解器稳定，机械臂能稳稳站住。
+
+  用法（在 launch 里把它传给 gzserver.launch.py 的 world 参数）：
+      world:=$(find my_robot_bringup)/worlds/empty_ros.world
+-->
+<sdf version="1.5">
+  <world name="default">
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- 物理参数：步长减半 + 给接触加一层"表面层"，避免 ODE 求解器在接触约束下发散 -->
+    <physics name="default" type="ode">
+      <max_step_size>0.0005</max_step_size>
+      <real_time_update_rate>2000</real_time_update_rate>
+      <real_time_factor>1</real_time_factor>
+      <ode>
+        <constraints>
+          <!-- 接触表面层：让底座落在地面上时接触是"软"的，不会抖也不会炸 -->
+          <contact_surface_layer>0.001</contact_surface_layer>
+          <contact_max_correcting_vel>100</contact_max_correcting_vel>
+          <contact_max_correcting_pos>0.1</contact_max_correcting_pos>
+        </constraints>
+      </ode>
+    </physics>
+
+    <!-- 把 Gazebo 的模型/连杆/关节状态发布到 ROS -->
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+      <ros>
+        <namespace>/gazebo</namespace>
+      </ros>
+      <update_rate>100.0</update_rate>
+    </plugin>
+  </world>
+</sdf>

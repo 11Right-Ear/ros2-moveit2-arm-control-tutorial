@@ -13,4 +13,10 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+# URDF -> SDF 转换脚本（Gazebo Classic 用，详见 scripts/urdf_to_sdf.py）
+install(
+  PROGRAMS scripts/urdf_to_sdf.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

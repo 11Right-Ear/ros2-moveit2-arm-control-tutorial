@@ -12,6 +12,7 @@ ros2_ws/src/gazebo_ros2_control/
 
 # 运行时日志
 ros2_ws/error.log
+ros2_ws/info.log
 
 # CMake
 CMakeCache.txt

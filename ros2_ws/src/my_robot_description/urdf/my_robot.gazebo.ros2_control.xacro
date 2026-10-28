@@ -4,12 +4,29 @@
   <!--
     Gazebo 物理仿真专用 ros2_control 硬件接口（区别于 mock 版
     my_robot.ros2_control.xacro）：
+
     1) 硬件插件换成 gazebo_ros2_control/GazeboSystem，由 Gazebo 物理引擎驱动；
-    2) 每个关节的 position 命令接口通过 pos_kp/pos_kd 声明 PID 增益，
-       gazebo_ros2_control 会据此把位置误差换算成力矩作用到关节上（真实物理）。
-       这里刻意去掉 pos_ki（积分项），避免 windup 导致臂发散；kd 加大 + URDF 里
-       的关节 dynamics damping 一起提供阻尼，防止振荡。
-    3) 显式给出 initial_value，避免状态初值为 NaN 导致仿真发散；
+
+    2) **不使用 pos_kp / pos_kd（即不走 PID 力矩控制）**
+       这里踩过一个坑：gazebo_ros2_control 的 PID 分支会从 ROS 线程直接调用
+       ODE 的 dJointAddHingeTorque() 给关节加力矩，而 Gazebo 的物理线程
+       同时在积分同一个关节，两边没有互斥（这个版本的插件也没去拿物理引擎的
+       physicsUpdateMutex），结果 ODE 的关节状态被打坏，关节速度立刻变成 NaN，
+       整个模型随后被判定为发散、直接炸开。
+       去掉 pos_kp/pos_kd 之后插件走的是 position 控制分支
+       （SetPosition 直接设置关节角），模型稳定、轨迹也能正常跟随。
+       以后如果换了插件版本、确认力矩控制不再破坏物理状态，再把
+       pos_kp / pos_kd 加回来即可（每个关节里留了注释掉的写法）。
+
+    3) initial_value 显式给成 0.0，也就是 URDF 的零位。
+       这个值有两个作用：
+         - gazebo_ros2_control 加载硬件时会用它设置 Gazebo 关节的位置
+           （见 gazebo_system.cpp 里的 sim_joints_[j]->SetPosition），
+           所以它必须和"模型实际出生时的姿态"一致，否则插件会在加载时把关节
+           硬掰到另一个角度，关节链的约束随即被违反，模型会被物理引擎甩飞；
+         - 它同时被 urdf_to_sdf.py 当作机械臂的"出生姿态"，用来算每个连杆
+           在模型坐标系下的绝对位姿（见 my_robot_bringup/launch/gazebo.launch.py）。
+
     4) <gazebo> 插件块 libgazebo_ros2_control.so 在模型加载时创建
        controller_manager 并加载控制器参数 yaml。
   -->
@@ -19,63 +36,89 @@
     </hardware>
 
     <joint name="joint1">
-      <param name="pos_kp">80.0</param>
-      <param name="pos_kd">15.0</param>
+      <!-- <param name="pos_kp">80.0</param> -->
+      <!-- <param name="pos_kd">15.0</param> -->
       <command_interface name="position"/>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
       </state_interface>
+      <!-- 速度状态接口：不声明的话 joint_state_broadcaster 会往
+           /joint_states 里发 NaN 速度（没有可用的状态接口） -->
+      <state_interface name="velocity"/>
     </joint>
     <joint name="joint2">
-      <param name="pos_kp">80.0</param>
-      <param name="pos_kd">15.0</param>
+      <!-- <param name="pos_kp">80.0</param> -->
+      <!-- <param name="pos_kd">15.0</param> -->
       <command_interface name="position"/>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
       </state_interface>
+      <!-- 速度状态接口：不声明的话 joint_state_broadcaster 会往
+           /joint_states 里发 NaN 速度（没有可用的状态接口） -->
+      <state_interface name="velocity"/>
     </joint>
     <joint name="joint3">
-      <param name="pos_kp">80.0</param>
-      <param name="pos_kd">15.0</param>
+      <!-- <param name="pos_kp">80.0</param> -->
+      <!-- <param name="pos_kd">15.0</param> -->
       <command_interface name="position"/>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
       </state_interface>
+      <!-- 速度状态接口：不声明的话 joint_state_broadcaster 会往
+           /joint_states 里发 NaN 速度（没有可用的状态接口） -->
+      <state_interface name="velocity"/>
     </joint>
     <joint name="joint4">
-      <param name="pos_kp">80.0</param>
-      <param name="pos_kd">15.0</param>
+      <!-- <param name="pos_kp">80.0</param> -->
+      <!-- <param name="pos_kd">15.0</param> -->
       <command_interface name="position"/>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
       </state_interface>
+      <!-- 速度状态接口：不声明的话 joint_state_broadcaster 会往
+           /joint_states 里发 NaN 速度（没有可用的状态接口） -->
+      <state_interface name="velocity"/>
     </joint>
     <joint name="joint5">
-      <param name="pos_kp">80.0</param>
-      <param name="pos_kd">15.0</param>
+      <!-- <param name="pos_kp">80.0</param> -->
+      <!-- <param name="pos_kd">15.0</param> -->
       <command_interface name="position"/>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
       </state_interface>
+      <!-- 速度状态接口：不声明的话 joint_state_broadcaster 会往
+           /joint_states 里发 NaN 速度（没有可用的状态接口） -->
+      <state_interface name="velocity"/>
     </joint>
     <joint name="joint6">
-      <param name="pos_kp">80.0</param>
-      <param name="pos_kd">15.0</param>
+      <!-- <param name="pos_kp">80.0</param> -->
+      <!-- <param name="pos_kd">15.0</param> -->
       <command_interface name="position"/>
       <state_interface name="position">
         <param name="initial_value">0.0</param>
       </state_interface>
+      <!-- 速度状态接口：不声明的话 joint_state_broadcaster 会往
+           /joint_states 里发 NaN 速度（没有可用的状态接口） -->
+      <state_interface name="velocity"/>
     </joint>
 
   </ros2_control>
 
   <!-- Gazebo 加载该插件，创建 controller_manager 并读取控制器参数。
        hold_joints=true：控制器尚未激活时把关节速度锁为 0，
-       避免机械臂在启动最初几秒因重力自由下落而折断塌陷。 -->
+       避免机械臂在启动最初几秒因重力自由下落而折断塌陷。
+
+       robot_param_node：告诉插件去哪里取 robot_description 参数。
+       gazebo_ros2_control 默认去连名为 robot_state_publisher 的节点，
+       但如果机器上同时有多个同名节点（比如上次 Gazebo 被强杀留下的残留进程），
+       插件可能连到旧的那一个，读到过期的 URDF，于是用错误的 initial_value
+       去掰关节，模型直接被物理引擎甩飞。这里指定一个专用的节点名，
+       gazebo.launch.py 里 robot_state_publisher 就用这个名字启动。 -->
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
       <parameters>$(find my_robot_bringup)/config/ros2_controllers_gazebo.yaml</parameters>
       <hold_joints>true</hold_joints>
+      <robot_param_node>my_robot_state_publisher</robot_param_node>
     </plugin>
   </gazebo>
 
